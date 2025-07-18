@@ -1,0 +1,24 @@
+{
+  "name": "postaway-api",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codebygurpreet/postaway-api.git"
+  },
+  "author": "Gurpreet Singh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/codebygurpreet/postaway-api/issues"
+  },
+  "homepage": "https://github.com/codebygurpreet/postaway-api#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
