@@ -1,16 +1,16 @@
-// import required packages
+// Import required packages
 import express from "express";
-
 import UserController from "./user.controller.js";
+
+// Initialize controller and router
+const router = express.Router();
 const userController = new UserController();
 
-const router = express.Router();
+// Routes
+// User registration
+router.post("/signup", userController.signUp);   
 
-
-// user registration
-router.post('/signup',  userController.signUp)
-
-// user signIn
-router.post('/signin',  userController.signIn)
+// User login
+router.post("/signin", userController.signIn);   
 
 export default router;

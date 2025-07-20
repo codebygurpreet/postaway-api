@@ -1,7 +1,7 @@
 // import required packages
 import jwt from "jsonwebtoken";
 
-const jwtAuth = (req,res) => {
+const jwtAuth = (req, res, next) => {
 
     // 1. read the token
     const token = req.headers['authorization']; 
@@ -16,7 +16,8 @@ const jwtAuth = (req,res) => {
         const payload =  jwt.verify(token,
             "x8T0Gv2zmfOgOAa2tCcvLOaaOPuI2roE"
         )
-        // req.userID = payload.userID;
+        req.userID = payload.userID;
+        console.log(payload);
     }catch(err){
         // 4. return err
         console.log(err)
@@ -26,3 +27,4 @@ const jwtAuth = (req,res) => {
     // 5. call next middleware
     next();
 }
+export default jwtAuth;
