@@ -2,6 +2,7 @@
 import express from "express";
 import jwtAuth from "../../middleware/jwt.middleware.js";
 import PostController from "./post.controller.js";
+import upload from "../../middleware/multer.middleware.js";
 
 // Initialize controller and router
 const router = express.Router();
@@ -9,7 +10,7 @@ const postController = new PostController();
 
 // Routes
 // Create a new post
-router.post("/", jwtAuth, postController.createNewPost);
+router.post("/", jwtAuth, upload.single('imageUrl'),  postController.createNewPost);
 
 // Get all posts
 router.get("/all", postController.getAllPosts);              

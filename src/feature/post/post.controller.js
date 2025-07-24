@@ -4,15 +4,17 @@ export default class PostController {
   async createNewPost(req, res) {
     try {
       const userId = req.userID;
-      const { caption, imageUrl } = req.body;
+      const {caption} = req.body;
+      const imageUrl = req.file.filename;
+      // console.log(imageUrl)
 
       const post = PostModel.createNewPost(userId, caption, imageUrl);
       console.log(post)
-      return res.status(201).json({ message: "Post created successfully", post });
+      return res.status(201).json({ success : true, message: "Post created successfully", post });
 
     } catch (err) {
       console.error("Create Post Error:", err.message);
-      return res.status(500).json({ message: err.message || "Internal Server Error" });
+      return res.status(500).json({ success : false, message: err.message || "Internal Server Error" });
     }
   }
 
