@@ -7,14 +7,26 @@ let comments = [
 ];
 
 export default class CommentModel {
+
+    constructor(id, userId, postId, content) {
+        this.id = id;
+        this.userId = userId;
+        this.postId = postId;
+        this.content = content;
+    }
+
     static getAllComment(postId) {
         return comments.filter(comment => comment.postId == postId);
     }
 
 
-    createComment() {
+    static createComment(userId, postId, content) {
+        const newComment = new CommentModel(comments.length + 1, userId, postId, content);
 
+        comments.push(newComment);
+        return newComment;
     }
+
 
     deleteComment() {
 
