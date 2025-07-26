@@ -28,9 +28,17 @@ export default class CommentModel {
     }
 
 
-    deleteComment() {
+    static deleteComment(commentId, userId) {
+        const index = comments.findIndex(
+            (c) => c.id == commentId && c.userId == userId
+        );
 
+        if (index === -1) return null;
+
+        const deleted = comments.splice(index, 1)[0]; // Return deleted comment
+        return deleted;
     }
+
 
     updateComment() {
 

@@ -86,10 +86,36 @@ export default class CommentController {
         }
     }
 
+    deleteComment(req, res) {
+        try {
+            const userId = req.userID;
+            const commentId = req.params.id;
 
-    deleteComment() {
+            const deletedComment = CommentModel.deleteComment(commentId, userId);
 
+            if (!deletedComment) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Comment not found or unauthorized to delete"
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: "Comment deleted successfully",
+                data: deletedComment
+            });
+
+        } catch (err) {
+            console.error("Error in deleting comment:", err.message);
+
+            return res.status(500).json({
+                success: false,
+                message: err.message || "Something went wrong while deleting the comment"
+            });
+        }
     }
+
 
     updateComment() {
 
