@@ -117,9 +117,33 @@ export default class CommentController {
     }
 
 
-    updateComment() {
+    updateComment(req, res) {
+        try {
+            const userId = req.userID;
+            const commentId = parseInt(req.params.id);
+            const { content } = req.body;
 
+            const updatedComment = CommentModel.updateComment(commentId, userId, content);
+
+            if (!updatedComment) {
+                throw new Error("Comment not found or you are not the owner");
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: "Comment updated successfully",
+                updatedComment
+            });
+
+        } catch (err) {
+            console.error("Error in updating comment:", err.message);
+            return res.status(500).json({
+                success: false,
+                message: err.message || "Something went wrong while updating the comment"
+            });
+        }
     }
+
 
 
 }

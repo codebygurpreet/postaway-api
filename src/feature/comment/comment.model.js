@@ -16,7 +16,7 @@ export default class CommentModel {
     }
 
     static getAllComment(postId) {
-        return comments.filter(comment => comment.postId == postId);
+        return comments.filter(comment => comment.postId == postId );
     }
 
 
@@ -40,8 +40,15 @@ export default class CommentModel {
     }
 
 
-    updateComment() {
+    static updateComment(commentId, userId, content) {
+        const index = comments.findIndex((c) => c.id === commentId && c.userId === userId);
 
+        if (index === -1) return null;
+
+        comments[index].content = content;
+
+        return comments[index];
     }
+
 }
 
