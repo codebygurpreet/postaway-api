@@ -23,4 +23,8 @@ export default class UserModel {
   static signIn(email, password) {
     return users.find(user => user.email === email && user.password === password) || null;
   }
+
+  static getAllUser(){
+    return users
+  }
 }
