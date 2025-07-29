@@ -1,5 +1,6 @@
 // import required packages
 import express from "express";
+import loggerMiddleware from "./src/middleware/logger.middleware.js";
 
 
 // load environmental variable from .env file
@@ -9,13 +10,15 @@ import userRoutes from "./src/feature/user/user.routes.js"
 import postsRoutes from "./src/feature/post/post.routes.js"
 import commentRoutes from "./src/feature/comment/comment.routes.js"
 import likeRoutes from "./src/feature/like/like.routes.js"
+
+
 // create an instance of express app
 const app = express();
 
 
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing form data
-
+app.use(loggerMiddleware); // using logger middleware for every request
 
 // User Routes
 app.use('/api/user', userRoutes);
