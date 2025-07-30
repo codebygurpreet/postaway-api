@@ -1,27 +1,34 @@
-// import file system pacakge
+// Import required modules
 import winston from "winston";
 
+// Define custom log format
+const customFormat = winston.format.printf(({ level, message, timestamp }) => {
+  return `[${timestamp}] ${level}: ${message}`;
+});
 
-// config winston right here
-
+// Configure Winston logger
 const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.json(), // will set formet
-    defaultMeta: {service: "request-logging"}, // default information (message) to every logs
-    transports: [
-        new winston.transports.File({filename:'logs.txt'})
-    ] //will tell where to save all logs
-})
+  level: "info",
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    customFormat
+  ),
+  transports: [
+    new winston.transports.File({ filename: "logs.txt" })
+  ],
+});
 
-const loggerMiddleware = async(req,res,next) => {
-    // if url is not on signin and signup then only log data
-    if (!(req.url.includes("signup"))){
-        //log data
-        const logData = `${req.url} - ${JSON.stringify(req.body)}`
-        // calling log function with req.body
-        logger.info(logData)
-    };
-    next();
-}
+// Logger middleware for incoming requests
+const loggerMiddleware = async (req, res, next) => {
+  const excludedRoutes = ["/signin", "/signup"];
+  const shouldLog = !excludedRoutes.some((route) => req.url.includes(route));
+
+  if (shouldLog) {
+    const logMessage = `${req.method} ${req.originalUrl} ${req.body ? JSON.stringify(req.body): "Request Body Is Empty"}`;
+    logger.info(logMessage);
+  }
+
+  next();
+};
 
 export default loggerMiddleware;
