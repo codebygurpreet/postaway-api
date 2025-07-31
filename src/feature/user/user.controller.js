@@ -1,35 +1,28 @@
+// importing required packages
 import UserModel from "./user.model.js";
 import jwt from "jsonwebtoken";
 
 export default class UserController {
-  async signUp(req, res) {
+  signUp(req, res, next) {
     try {
       const { name, email, password } = req.body;
-      const user = await UserModel.signUp(name, email, password);
-
-      if (!user) {
-        return res.status(400).json({ message: "User already exists" });
-      }
+      const user = UserModel.signUp(name, email, password);
 
       return res.status(201).json({
+        success: true,
         message: "User registered successfully",
         user
       });
 
     } catch (err) {
-      console.error("SignUp Error:", err);
-      return res.status(500).json({ message: "Internal Server Error" });
+      next(err);
     }
   }
 
-  async signIn(req, res) {
+  signIn(req, res, next) {
     try {
       const { email, password } = req.body;
-      const user = await UserModel.signIn(email, password);
-
-      if (!user) {
-        return res.status(400).json({ message: "Invalid credentials" });
-      }
+      const user = UserModel.signIn(email, password);
 
       const token = jwt.sign(
         { userID: user.id, email: user.email },
@@ -40,8 +33,7 @@ export default class UserController {
       return res.status(200).send(token);
 
     } catch (err) {
-      console.error("SignIn Error:", err);
-      return res.status(500).json({ message: "Internal Server Error" });
+      next(err);
     }
   }
 }

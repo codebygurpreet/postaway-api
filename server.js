@@ -1,6 +1,7 @@
 // import required packages
 import express from "express";
 import loggerMiddleware from "./src/middleware/logger.middleware.js";
+import errorHandler from "./src/middleware/errorHandler.middleware.js";
 
 
 // load environmental variable from .env file
@@ -29,6 +30,11 @@ app.use('/api/likes', likeRoutes);
 app.get('/', (req,res)=>{
     res.send("Welcome to postaway-api");
 })
+
+// error handler – always comes LAST
+app.use(errorHandler);
+
+
 // set up server
 const PORT = 3000;
 app.listen(PORT, ()=>{
