@@ -1,3 +1,4 @@
+// post.model.js
 let posts = [
   { id: 1, userId: 1, caption: 'First post', imageUrl: 'https://example.com/image1.jpg' },
   { id: 2, userId: 1, caption: 'Second post', imageUrl: 'https://example.com/image1.jpg' },
@@ -15,9 +16,7 @@ export default class PostModel {
   }
 
   static createNewPost(userId, caption, imageUrl) {
-    if (!userId || !caption || !imageUrl) {
-      throw new Error("Missing post data");
-    }
+    if (!userId || !caption) return null;
 
     const newPost = new PostModel(posts.length + 1, userId, caption, imageUrl);
     posts.push(newPost);
@@ -25,30 +24,21 @@ export default class PostModel {
   }
 
   static getAllPosts() {
-    return posts;
+    return posts.length > 0 ? posts : null;
   }
 
   static getPostById(id) {
-    const post = posts.find(post => post.id == id);
-    if (!post) {
-      throw new Error("Post not found");
-    }
-    return post;
+    return posts.find(post => post.id == id) || null;
   }
 
   static getPostByUserCredentials(userId) {
-    if (!userId) {
-      throw new Error("User ID required");
-    }
+    if (!userId) return null;
     return posts.filter(post => post.userId === userId);
   }
-  
-  static updatePostById(id, data) {
-    const index = posts.findIndex(post => post.id == id);
-    
-    if(index === -1){
-      throw new Error("Post not Found");
-    }
+
+  static updatePostById(postId, userId, data) {
+    const index = posts.findIndex(post => post.id === postId && post.userId === userId);
+    if (index === -1) return null;
 
     posts[index] = {
       ...posts[index],
@@ -57,18 +47,13 @@ export default class PostModel {
 
     return posts[index];
   }
-  static deletePostById(id, data) {
-      if (!id) {
-      throw new Error("Missing id ");
-    }
-    const index = posts.findIndex(post => post.id == id);
-    
-    if(index === -1){
-      throw new Error("Post not Found");
-    }
 
-    posts.splice(index,1)
+  static deletePostById(postId, userId) {
+    const index = posts.findIndex(post => post.id === postId && post.userId === userId);
+    if (index === -1) return null;
 
-    return posts[index];
+    const deleted = posts[index];
+    posts.splice(index, 1);
+    return deleted;
   }
 }

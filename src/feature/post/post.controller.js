@@ -1,86 +1,106 @@
+// post.controller.js
+import ApplicationError from "../../../utils/applicationError.js";
 import PostModel from "./post.model.js";
 
 export default class PostController {
-  async createNewPost(req, res) {
+  createNewPost(req, res, next) {
     try {
       const userId = req.userID;
-      const {caption} = req.body;
-      const imageUrl = req.file.filename;
-      // console.log(imageUrl)
+      const { caption } = req.body;
 
+      if (!req.file) {
+        throw new ApplicationError("Image file is required", 400);
+      }
+
+      if (!caption) {
+        throw new ApplicationError("Caption are required", 400);
+      }
+
+      const imageUrl = req.file.filename;
       const post = PostModel.createNewPost(userId, caption, imageUrl);
-      console.log(post)
-      return res.status(201).json({ success : true, message: "Post created successfully", post });
+
+      if (!post) {
+        throw new ApplicationError("Failed to create post", 500);
+      }
+
+      return res.status(201).json({ success: true, message: "Post created successfully", post });
 
     } catch (err) {
-      console.error("Create Post Error:", err.message);
-      return res.status(500).json({ success : false, message: err.message || "Internal Server Error" });
+      next(err);
     }
   }
 
-  async getAllPosts(req, res) {
+  getAllPosts(req, res, next) {
     try {
       const posts = PostModel.getAllPosts();
-      return res.status(200).json({ message: "All posts retrieved", posts });
+      if (!posts) throw new ApplicationError("There are no posts yet", 404);
+
+      return res.status(200).json({ success: true, message: "All posts retrieved", posts });
 
     } catch (err) {
-      console.error("Get All Posts Error:", err.message);
-      return res.status(500).json({ message: err.message || "Internal Server Error" });
+      next(err);
     }
   }
 
-  async getPostById(req, res) {
+  getPostById(req, res, next) {
     try {
-      const { id } = req.params;
-      const post = PostModel.getPostById(id);
+      const id = parseInt(req.params.id);
+      if (!id) throw new ApplicationError("Invalid post ID", 400);
 
-      return res.status(200).json({ message: "Post retrieved", post });
+      const post = PostModel.getPostById(id);
+      if (!post) throw new ApplicationError("Post not found", 404);
+
+      return res.status(200).json({ success: true, message: "Post retrieved", post });
 
     } catch (err) {
-      console.error("Get Post By ID Error:", err.message);
-      return res.status(404).json({ message: err.message || "Post not found" });
+      next(err);
     }
   }
 
-  async getPostByUserCredentials(req, res) {
+  getPostByUserCredentials(req, res, next) {
     try {
       const userId = req.userID;
+      if (!userId) throw new ApplicationError("User ID required", 400);
+
       const posts = PostModel.getPostByUserCredentials(userId);
-
-      return res.status(200).json({ message: `Posts by user ${userId}`, posts });
+      return res.status(200).json({ success: true, message: `Posts by user ${userId}`, posts });
 
     } catch (err) {
-      console.error("Get Posts By User Error:", err.message);
-      return res.status(500).json({ message: err.message || "Internal Server Error" });
+      next(err);
     }
   }
 
-  async updatePostById(req, res) {
+  updatePostById(req, res, next) {
     try {
-      const { id } = req.params;
+      const userId = req.userID;
+      const postId = parseInt(req.params.id);
       const data = req.body;
-      const updatedPost = PostModel.updatePostById(id,data);
 
-      res.status(200).json({ success: true, message: "Post updated successfully", updatedPost})
+      if (!postId || !userId) throw new ApplicationError("Missing post ID or user ID", 400);
+
+      const updatedPost = PostModel.updatePostById(postId, userId, data);
+      if (!updatedPost) throw new ApplicationError("Post not found or update failed", 404);
+
+      res.status(200).json({ success: true, message: "Post updated successfully", updatedPost });
 
     } catch (err) {
-      console.error("Update Posts By Id Error:", err.message);
-      return res.status(404).json({ message: err.message || "Post not found" });
+      next(err);
     }
   }
 
-  async deletePostById(req, res) {
+  deletePostById(req, res, next) {
     try {
-      const { id } = req.params;
-      const deletePost = PostModel.deletePostById(id);
+      const userId = req.userID;
+      const postId = parseInt(req.params.id);
+      if (!postId) throw new ApplicationError("Post ID is required", 400);
 
-      res.status(200).json({ success: true, message: "Post deleted successfully", deletePost})
+      const deletePost = PostModel.deletePostById(postId, userId);
+      if (!deletePost) throw new ApplicationError("Post not found", 404);
+
+      res.status(200).json({ success: true, message: "Post deleted successfully", deletePost });
 
     } catch (err) {
-      console.error("Delete Posts By Id Error:", err.message);
-      return res.status(404).json({ success: false, message: err.message || "Post not found" });
+      next(err);
     }
   }
-
-  
 }

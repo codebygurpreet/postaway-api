@@ -22,9 +22,9 @@ router.get("/:id", postController.getPostById);
 router.get("/", jwtAuth, postController.getPostByUserCredentials);     
 
 // Update post by ID
-router.put("/:id", postController.updatePostById);   
+router.put("/:id", upload.none(), jwtAuth, postController.updatePostById);   
 
 // Delete post by ID
-router.delete("/:id", postController.deletePostById);               
+router.delete("/:id", jwtAuth, postController.deletePostById);               
 
 export default router;
