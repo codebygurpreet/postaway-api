@@ -98,9 +98,28 @@ export default class PostController {
       if (!deletePost) throw new ApplicationError("Post not found", 404);
 
       res.status(200).json({ success: true, message: "Post deleted successfully", deletePost });
-
+      
     } catch (err) {
       next(err);
     }
   }
+  
+  // Additional Task
+  // 1. Filter by caption
+  filterByCaption(req,res,next){
+    try{
+      const caption = req.query.caption;
+      if(!caption) throw new ApplicationError("Caption is not defined", 400);
+
+      const filteredPosts = PostModel.filterByCaption(caption);
+      
+      if(filteredPosts.length === 0) throw new ApplicationError("Post Not found", 404);
+
+      res.status(200).json({ success: true, message: "Post retrieved by caption", filteredPosts });
+
+    }catch(err){
+      next(err);
+    }
+  }
+
 }

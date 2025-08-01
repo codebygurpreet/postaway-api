@@ -1,10 +1,35 @@
 // post.model.js
 let posts = [
-  { id: 1, userId: 1, caption: 'First post', imageUrl: 'https://example.com/image1.jpg' },
-  { id: 2, userId: 1, caption: 'Second post', imageUrl: 'https://example.com/image1.jpg' },
-  { id: 3, userId: 2, caption: 'Third post', imageUrl: 'https://example.com/image2.jpg' },
-  { id: 4, userId: 2, caption: 'Fourth post', imageUrl: 'https://example.com/image2.jpg' },
-  { id: 5, userId: 3, caption: 'Fifth post', imageUrl: 'https://example.com/image3.jpg' },
+  {
+    id: 1,
+    userId: 1,
+    caption: "First post",
+    imageUrl: "https://example.com/image1.jpg",
+  },
+  {
+    id: 2,
+    userId: 1,
+    caption: "Second post",
+    imageUrl: "https://example.com/image1.jpg",
+  },
+  {
+    id: 3,
+    userId: 2,
+    caption: "Third post",
+    imageUrl: "https://example.com/image2.jpg",
+  },
+  {
+    id: 4,
+    userId: 2,
+    caption: "Fourth post",
+    imageUrl: "https://example.com/image2.jpg",
+  },
+  {
+    id: 5,
+    userId: 3,
+    caption: "Fifth post",
+    imageUrl: "https://example.com/image3.jpg",
+  },
 ];
 
 export default class PostModel {
@@ -28,16 +53,18 @@ export default class PostModel {
   }
 
   static getPostById(id) {
-    return posts.find(post => post.id == id) || null;
+    return posts.find((post) => post.id == id) || null;
   }
 
   static getPostByUserCredentials(userId) {
     if (!userId) return null;
-    return posts.filter(post => post.userId === userId);
+    return posts.filter((post) => post.userId === userId);
   }
 
   static updatePostById(postId, userId, data) {
-    const index = posts.findIndex(post => post.id === postId && post.userId === userId);
+    const index = posts.findIndex(
+      (post) => post.id === postId && post.userId === userId
+    );
     if (index === -1) return null;
 
     posts[index] = {
@@ -49,11 +76,24 @@ export default class PostModel {
   }
 
   static deletePostById(postId, userId) {
-    const index = posts.findIndex(post => post.id === postId && post.userId === userId);
+    const index = posts.findIndex(
+      (post) => post.id === postId && post.userId === userId
+    );
     if (index === -1) return null;
 
     const deleted = posts[index];
     posts.splice(index, 1);
     return deleted;
+  }
+
+  // Additional Task
+  // 1. Filter by caption
+  static filterByCaption(caption) {
+    const searchWords  = caption.toLowerCase().trim().split(/\s+/);
+
+    return posts.filter((post) => {
+      const postCaption = post.caption.toLowerCase();
+      return searchWords.every((word) => postCaption.includes(word));
+    });
   }
 }
