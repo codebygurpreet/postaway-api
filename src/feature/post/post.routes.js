@@ -28,6 +28,10 @@ router.get("/", jwtAuth, postController.getPostByUserCredentials);
 router.put("/:id", upload.none(), jwtAuth, postController.updatePostById);   
 
 // Delete post by ID
-router.delete("/:id", jwtAuth, postController.deletePostById);               
+router.delete("/:id", jwtAuth, postController.deletePostById);   
+
+// post.routes.js
+router.patch("/:id/status", upload.none(), jwtAuth, postController.postStatus);
+
 
 export default router;

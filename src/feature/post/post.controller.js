@@ -6,7 +6,7 @@ export default class PostController {
   createNewPost(req, res, next) {
     try {
       const userId = req.userID;
-      const { caption } = req.body;
+      const { caption, status } = req.body;
 
       if (!req.file) {
         throw new ApplicationError("Image file is required", 400);
@@ -16,8 +16,13 @@ export default class PostController {
         throw new ApplicationError("Caption are required", 400);
       }
 
+      // Allow only valid statuses
+      const allowedStatuses = ["published", "draft"];
+      const postStatus = allowedStatuses.includes(status) ? status : "published";
+
+
       const imageUrl = req.file.filename;
-      const post = PostModel.createNewPost(userId, caption, imageUrl);
+      const post = PostModel.createNewPost(userId, caption, imageUrl, postStatus);
 
       if (!post) {
         throw new ApplicationError("Failed to create post", 500);
@@ -98,28 +103,58 @@ export default class PostController {
       if (!deletePost) throw new ApplicationError("Post not found", 404);
 
       res.status(200).json({ success: true, message: "Post deleted successfully", deletePost });
-      
+
     } catch (err) {
       next(err);
     }
   }
-  
+
   // Additional Task
   // 1. Filter by caption
-  filterByCaption(req,res,next){
-    try{
+  filterByCaption(req, res, next) {
+    try {
       const caption = req.query.caption;
-      if(!caption) throw new ApplicationError("Caption is not defined", 400);
+      if (!caption) throw new ApplicationError("Caption is not defined", 400);
 
       const filteredPosts = PostModel.filterByCaption(caption);
-      
-      if(filteredPosts.length === 0) throw new ApplicationError("Post Not found", 404);
+
+      if (filteredPosts.length === 0) throw new ApplicationError("Post Not found", 404);
 
       res.status(200).json({ success: true, message: "Post retrieved by caption", filteredPosts });
 
-    }catch(err){
+    } catch (err) {
       next(err);
     }
   }
+
+  // 2. Add a feature to save a post as a draft and to achieve a post
+  postStatus(req, res, next) {
+    try {
+      const postID = req.params.id;
+      const userID = req.userID;
+      const { status } = req.body;
+
+      const result = PostModel.postStatus(userID, postID, status);
+
+      if (result.error === "NOT_FOUND") {
+        throw new ApplicationError("Post Not Found", 404);
+      }
+
+      if (result.error === "INVALID_TRANSITION") {
+        throw new ApplicationError(
+          `Invalid status transition from '${result.currentStatus}' to '${result.newStatus}'`,
+          400
+        );
+      }
+
+      res.status(201).json({
+        success: true,
+        updatedStatus: result.updatedPost,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
 
 }
