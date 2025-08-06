@@ -18,18 +18,25 @@ export default class PostController {
 
       // Allow only valid statuses
       const allowedStatuses = ["published", "draft"];
-      const postStatus = allowedStatuses.includes(status) ? status : "published";
-
+      const postStatus = allowedStatuses.includes(status)
+        ? status
+        : "published";
 
       const imageUrl = req.file.filename;
-      const post = PostModel.createNewPost(userId, caption, imageUrl, postStatus);
+      const post = PostModel.createNewPost(
+        userId,
+        caption,
+        imageUrl,
+        postStatus
+      );
 
       if (!post) {
         throw new ApplicationError("Failed to create post", 500);
       }
 
-      return res.status(201).json({ success: true, message: "Post created successfully", post });
-
+      return res
+        .status(201)
+        .json({ success: true, message: "Post created successfully", post });
     } catch (err) {
       next(err);
     }
@@ -40,8 +47,9 @@ export default class PostController {
       const posts = PostModel.getAllPosts();
       if (!posts) throw new ApplicationError("There are no posts yet", 404);
 
-      return res.status(200).json({ success: true, message: "All posts retrieved", posts });
-
+      return res
+        .status(200)
+        .json({ success: true, message: "All posts retrieved", posts });
     } catch (err) {
       next(err);
     }
@@ -55,8 +63,9 @@ export default class PostController {
       const post = PostModel.getPostById(id);
       if (!post) throw new ApplicationError("Post not found", 404);
 
-      return res.status(200).json({ success: true, message: "Post retrieved", post });
-
+      return res
+        .status(200)
+        .json({ success: true, message: "Post retrieved", post });
     } catch (err) {
       next(err);
     }
@@ -68,8 +77,9 @@ export default class PostController {
       if (!userId) throw new ApplicationError("User ID required", 400);
 
       const posts = PostModel.getPostByUserCredentials(userId);
-      return res.status(200).json({ success: true, message: `Posts by user ${userId}`, posts });
-
+      return res
+        .status(200)
+        .json({ success: true, message: `Posts by user ${userId}`, posts });
     } catch (err) {
       next(err);
     }
@@ -81,13 +91,18 @@ export default class PostController {
       const postId = parseInt(req.params.id);
       const data = req.body;
 
-      if (!postId || !userId) throw new ApplicationError("Missing post ID or user ID", 400);
+      if (!postId || !userId)
+        throw new ApplicationError("Missing post ID or user ID", 400);
 
       const updatedPost = PostModel.updatePostById(postId, userId, data);
-      if (!updatedPost) throw new ApplicationError("Post not found or update failed", 404);
+      if (!updatedPost)
+        throw new ApplicationError("Post not found or update failed", 404);
 
-      res.status(200).json({ success: true, message: "Post updated successfully", updatedPost });
-
+      res.status(200).json({
+        success: true,
+        message: "Post updated successfully",
+        updatedPost,
+      });
     } catch (err) {
       next(err);
     }
@@ -102,8 +117,11 @@ export default class PostController {
       const deletePost = PostModel.deletePostById(postId, userId);
       if (!deletePost) throw new ApplicationError("Post not found", 404);
 
-      res.status(200).json({ success: true, message: "Post deleted successfully", deletePost });
-
+      res.status(200).json({
+        success: true,
+        message: "Post deleted successfully",
+        deletePost,
+      });
     } catch (err) {
       next(err);
     }
@@ -118,10 +136,14 @@ export default class PostController {
 
       const filteredPosts = PostModel.filterByCaption(caption);
 
-      if (filteredPosts.length === 0) throw new ApplicationError("Post Not found", 404);
+      if (filteredPosts.length === 0)
+        throw new ApplicationError("Post Not found", 404);
 
-      res.status(200).json({ success: true, message: "Post retrieved by caption", filteredPosts });
-
+      res.status(200).json({
+        success: true,
+        message: "Post retrieved by caption",
+        filteredPosts,
+      });
     } catch (err) {
       next(err);
     }
@@ -156,5 +178,18 @@ export default class PostController {
     }
   }
 
-
+  // 3. Implement sorting of posts based on user engagement and date
+  getSortedPosts(req, res, next) {
+    try {
+      const sortBy = req.query.sortBy || "engagement"; // or "date"
+      const sortedPosts = PostModel.getPostsSorted(sortBy);
+      res.status(200).json({
+        success: true,
+        message: `Sorted posts by ${sortBy}`,
+        data: sortedPosts,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }

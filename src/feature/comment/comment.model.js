@@ -16,7 +16,7 @@ export default class CommentModel {
     }
 
     static getAllComment(postId) {
-        return comments.filter(comment => comment.postId == postId );
+        return comments.filter(comment => comment.postId == postId);
     }
 
 
@@ -48,6 +48,12 @@ export default class CommentModel {
         comments[index].content = content;
 
         return comments[index];
+    }
+
+    // 3. Additional
+    // Assume comments = [{ postId: 1, userId: 1, content: 'Nice!' }, ...]
+    static countByPostId(postId) {
+        return comments.filter(comment => comment.postId === postId).length;
     }
 
 }

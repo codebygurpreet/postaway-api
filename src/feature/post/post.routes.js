@@ -15,8 +15,11 @@ router.post("/", jwtAuth, upload.single('imageUrl'),  postController.createNewPo
 // Get all posts
 router.get("/all", postController.getAllPosts);       
 
-// Additional Task Filter By Caption
-router.get("/filter", postController.filterByCaption);              
+// 1. Additional Task Filter By Caption
+router.get("/filter", postController.filterByCaption);
+
+// 3. Additional Task Implement sorting of posts based on user engagement and date
+router.get("/sorted", jwtAuth, postController.getSortedPosts);
 
 // Get post by ID
 router.get("/:id", postController.getPostById);            
@@ -30,7 +33,7 @@ router.put("/:id", upload.none(), jwtAuth, postController.updatePostById);
 // Delete post by ID
 router.delete("/:id", jwtAuth, postController.deletePostById);   
 
-// post.routes.js
+// 2. Additional Task post.routes.js
 router.patch("/:id/status", upload.none(), jwtAuth, postController.postStatus);
 
 

@@ -20,8 +20,8 @@ export default class LikeModel {
     }
 
     static getAllLikesForPost(postId) {
-        const result =  likes.filter(like => like.postId === postId);
-        if(result.length === 0) throw new Error("There is no like") 
+        const result = likes.filter(like => like.postId === postId);
+        if (result.length === 0) throw new Error("There is no like")
         return result
     }
 
@@ -35,4 +35,11 @@ export default class LikeModel {
         const deleted = likes.splice(index, 1)[0];
         return deleted;
     }
+
+    // 3. Additional 
+    // Assume likes = [{ postId: 1, userId: 2 }, ...]
+    static countByPostId(postId) {
+        return likes.filter(like => like.postId === postId).length;
+    }
+
 }
