@@ -35,7 +35,7 @@ export default class BookmarkController {
             const newBookmark = BookmarkModel.addBookmark(userId, postId); 
 
             if (newBookmark === null) {
-                throw new ApplicationError(`Post with id ${postId} not found.`, 404);
+                throw new ApplicationError(`Post with id ${postId} not found or status is draft.`, 404);
             }
 
             if (newBookmark === 'duplicate') {

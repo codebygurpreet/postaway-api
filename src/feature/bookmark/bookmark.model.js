@@ -13,9 +13,9 @@ export default class BookmarkModel {
     }
     
     static addBookmark(userId, postId) {
-        const postExists = PostModel.getPostById(postId);
+        const post = PostModel.getPostById(postId);
         
-        if(!postExists){
+        if(!post || post.status === 'draft'){
             return null 
         }
 

@@ -8,7 +8,7 @@ let posts = [
     userId: 1,
     caption: "First post",
     imageUrl: "https://example.com/image1.jpg",
-    status: "published",
+    status: "draft",
     createdAt: new Date("2024-08-01T10:00:00Z"),
   },
   {
