@@ -12,6 +12,6 @@ router.get('/', jwtAuth, bookmarkController.getBookmarks)
 
 router.post('/:postId', jwtAuth, bookmarkController.addBookmark)
 
-router.delete('/:postId',bookmarkController.removeBookmark)
+router.delete('/:postId', jwtAuth, bookmarkController.removeBookmark)
 
 export default router;

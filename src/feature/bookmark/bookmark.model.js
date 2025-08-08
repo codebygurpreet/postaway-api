@@ -6,30 +6,11 @@ const AllBookmarkPosts = [
 
 export default class BookmarkModel {
 
-    constructor(id, userId, postId){
+    constructor(id, userId, postId) {
         this.id = id;
         this.userId = userId;
         this.postId = postId;
     }
-    
-    static addBookmark(userId, postId) {
-        const post = PostModel.getPostById(postId);
-        
-        if(!post || post.status === 'draft'){
-            return null 
-        }
-
-        const alreadyBookmarked = AllBookmarkPosts.some(bookmark => bookmark.userId === userId && bookmark.postId === postId);
-
-        if (alreadyBookmarked) {
-        return 'duplicate'; // Let controller handle this
-    }
-
-        const newBookMark = new BookmarkModel(AllBookmarkPosts.length+1, userId, postId)
-        AllBookmarkPosts.push(newBookMark);
-        return newBookMark
-    }
-
 
     static getBookmarks(userId) {
         if (!AllBookmarkPosts || AllBookmarkPosts.length === 0) {
@@ -50,4 +31,40 @@ export default class BookmarkModel {
 
         return bookmarkedPosts;
     }
+
+
+    static addBookmark(userId, postId) {
+        const post = PostModel.getPostById(postId);
+
+        if (!post || post.status === 'draft') {
+            return null
+        }
+
+        const alreadyBookmarked = AllBookmarkPosts.some(bookmark => bookmark.userId === userId && bookmark.postId === postId);
+
+        if (alreadyBookmarked) {
+            return 'duplicate'; // Let controller handle this
+        }
+
+        const newBookMark = new BookmarkModel(AllBookmarkPosts.length + 1, userId, postId)
+        AllBookmarkPosts.push(newBookMark);
+        return newBookMark
+    }
+
+    static removeBookmark(userId, postId) {
+        const index = AllBookmarkPosts.findIndex(
+            b => b.userId === userId && b.postId === postId
+        );
+
+        if (index === -1) {
+            return null;
+        }
+
+        const removedBookmark = AllBookmarkPosts.splice(index, 1);
+        return removedBookmark; // returns array with removed item
+
+
+    }
+
+
 }
