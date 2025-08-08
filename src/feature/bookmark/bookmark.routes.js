@@ -10,7 +10,7 @@ const bookmarkController = new BookmarkController();
 // Routes
 router.get('/', jwtAuth, bookmarkController.getBookmarks)
 
-router.post('/',bookmarkController.addBookmark)
+router.post('/:postId', jwtAuth, bookmarkController.addBookmark)
 
 router.delete('/:postId',bookmarkController.removeBookmark)
 

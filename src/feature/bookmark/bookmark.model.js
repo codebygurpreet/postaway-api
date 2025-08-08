@@ -1,16 +1,42 @@
 // import required packages
 import PostModel from '../post/post.model.js'
-const AllBookMarks = [
+const AllBookmarkPosts = [
     { id: 1, userId: 1, postId: 2 }
 ];
 
-export default class BookMarkModel {
+export default class BookmarkModel {
+
+    constructor(id, userId, postId){
+        this.id = id;
+        this.userId = userId;
+        this.postId = postId;
+    }
+    
+    static addBookmark(userId, postId) {
+        const postExists = PostModel.getPostById(postId);
+        
+        if(!postExists){
+            return null 
+        }
+
+        const alreadyBookmarked = AllBookmarkPosts.some(bookmark => bookmark.userId === userId && bookmark.postId === postId);
+
+        if (alreadyBookmarked) {
+        return 'duplicate'; // Let controller handle this
+    }
+
+        const newBookMark = new BookmarkModel(AllBookmarkPosts.length+1, userId, postId)
+        AllBookmarkPosts.push(newBookMark);
+        return newBookMark
+    }
+
+
     static getBookmarks(userId) {
-        if (!AllBookMarks || AllBookMarks.length === 0) {
+        if (!AllBookmarkPosts || AllBookmarkPosts.length === 0) {
             return null; // Let controller handle this
         }
 
-        const userBookmarkedPosts = AllBookMarks.filter(p => p.userId === userId);
+        const userBookmarkedPosts = AllBookmarkPosts.filter(p => p.userId === userId);
 
         if (userBookmarkedPosts.length === 0) {
             return []; // Let controller handle empty bookmarks
