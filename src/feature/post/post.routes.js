@@ -13,7 +13,7 @@ const postController = new PostController();
 router.post("/", jwtAuth, upload.single('imageUrl'),  postController.createNewPost);
 
 // Get all posts
-router.get("/all", postController.getAllPosts);       
+router.get("/all", postController.getAll);       
 
 // 1. Additional Task Filter By Caption
 router.get("/filter", postController.filterByCaption);

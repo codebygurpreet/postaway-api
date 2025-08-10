@@ -42,14 +42,30 @@ export default class PostController {
     }
   }
 
-  getAllPosts(req, res, next) {
+  // 5. Get all posts (Pagination)
+  getAll(req, res, next) {
     try {
-      const posts = PostModel.getAllPosts();
-      if (!posts) throw new ApplicationError("There are no posts yet", 404);
+      const caption = req.query.caption || "";
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
 
-      return res
-        .status(200)
-        .json({ success: true, message: "All posts retrieved", posts });
+      const result = PostModel.findAll(page, limit, caption);
+
+      // Application error handling moved here
+      if (!result.posts || result.posts.length === 0) {
+        throw new ApplicationError("Posts Not Found", 404);
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "All posts",
+        data: result.posts,
+        pagination: {
+          totalPosts: result.totalPosts,
+          totalPages: result.totalPages,
+          currentPage: result.currentPage,
+        },
+      });
     } catch (err) {
       next(err);
     }
