@@ -7,28 +7,36 @@ export default class CommentController {
     getAllComment(req, res) {
         try {
             const postId = req.params.id;
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 5;
 
             // Get all posts and find the specific one
             const posts = PostModel.getAllPosts();
-            const post = posts.find(p => p.id == postId);
+            const post = posts.find(p => p.id == postId && p.status != "draft" && p.status != "archived");
 
             if (!post) {
                 return res.status(404).json({
                     success: false,
-                    message: "Post not found"
+                    message: "Post not found. It may be in draft or archived."
                 });
             }
 
             // Get all comments for the specific post
-            const comments = CommentModel.getAllComment(postId);
-            if (comments.length === 0) {
+            const result = CommentModel.getAllComment(postId, page, limit);
+
+            if (result.comments.length === 0) {
                 throw new Error("No comments found for this post");
             }
 
             return res.status(200).json({
                 success: true,
-                message: "Comments found",
-                comments
+                message: "All Comments",
+                data : result.comments,
+                pagination : {
+                    totalComments: result.totalComments,
+                    totalPages: result.totalPages,
+                    currentPage: result.currentPage
+                }
             });
 
         } catch (err) {
