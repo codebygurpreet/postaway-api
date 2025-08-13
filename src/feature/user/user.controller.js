@@ -2,7 +2,6 @@
 import UserModel from "./user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';
-import ApplicationError from "../../../utils/applicationError.js";
 
 export default class UserController {
   async signUp(req, res, next) {
