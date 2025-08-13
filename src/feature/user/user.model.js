@@ -24,8 +24,8 @@ export default class UserModel {
     return newUser;
   }
 
-  static signIn(email, password) {
-    const user = users.find(user => user.email === email && user.password === password);
+  static signIn(email) {
+    const user = users.find(user => user.email === email);
     if (!user) throw new ApplicationError("Invalid credentials", 400);
     return user;
 

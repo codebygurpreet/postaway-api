@@ -39,8 +39,9 @@ app.get("/", (req, res) => {
 // Error handler (should be the last middleware)
 app.use(errorHandler);
 
+
 // Start server
 const PORT = process.env.PORT || 3000;
-app.listen(process.env.PORT, () => {
+app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
 });
