@@ -1,6 +1,3 @@
-// importing required packages
-import ApplicationError from "../../../utils/applicationError.js";
-
 let users = [
   { id: 1, name: 'Gurpreet Singh', email: 'gurri1@gmail.com', password: 'password1' },
   { id: 2, name: 'Gurpreet Singh', email: 'gurri2@gmail.com', password: 'password2' },
@@ -14,24 +11,23 @@ export default class UserModel {
     this.password = password;
   }
 
-  static signUp(name, email, password) {
+  // Create a new user
+  static async signUp(name, email, password) {
     const exists = users.find(user => user.email === email);
-
-    if (exists) throw new ApplicationError("User already exists with this email", 400);
+    if (exists) return null;
 
     const newUser = new UserModel(users.length + 1, name, email, password);
     users.push(newUser);
     return newUser;
   }
 
-  static signIn(email) {
-    const user = users.find(user => user.email === email);
-    if (!user) throw new ApplicationError("Invalid credentials", 400);
-    return user;
-
+  // Find a user by email
+  static async signIn(email) {
+    return users.find(user => user.email === email) || null;
   }
 
-  static getAllUser() {
+  // Get all users
+  static async getAllUser() {
     return users;
   }
 }

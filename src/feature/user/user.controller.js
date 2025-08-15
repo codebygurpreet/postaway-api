@@ -1,21 +1,29 @@
-// importing required packages
 import UserModel from "./user.model.js";
 import jwt from "jsonwebtoken";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
+import ApplicationError from "../../../utils/applicationError.js";
 
 export default class UserController {
   async signUp(req, res, next) {
     try {
       const { name, email, password } = req.body;
-      const hashedPassword = await bcrypt.hash(password, 12)
-      const user = UserModel.signUp(name, email, hashedPassword);
+
+      if (!name || !email || !password) {
+        throw new ApplicationError("All fields are required", 400);
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 12);
+
+      const user = await UserModel.signUp(name, email, hashedPassword);
+      if (!user) {
+        throw new ApplicationError("User already exists with this email", 409);
+      }
 
       return res.status(201).json({
         success: true,
         message: "User registered successfully",
-        user
+        user,
       });
-
     } catch (err) {
       next(err);
     }
@@ -24,12 +32,19 @@ export default class UserController {
   async signIn(req, res, next) {
     try {
       const { email, password } = req.body;
-      const user = UserModel.signIn(email);
 
-      const isMatch = await bcrypt.compare(password, user.password)
+      if (!email || !password) {
+        throw new ApplicationError("Email and password are required", 400);
+      }
 
+      const user = await UserModel.signIn(email);
+      if (!user) {
+        throw new ApplicationError("User not Found", 404);
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(401).json({ message: "Invalid Credentials" });
+        throw new ApplicationError("Invalid credentials", 401);
       }
 
       const token = jwt.sign(
@@ -39,7 +54,6 @@ export default class UserController {
       );
 
       return res.status(200).send(token);
-
     } catch (err) {
       next(err);
     }

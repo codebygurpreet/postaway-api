@@ -9,9 +9,9 @@ const userController = new UserController();
 
 // Routes
 // User registration
-router.post("/signup", validateUser,  userController.signUp);   
+router.post("/signup", validateUser, (req, res, next) => userController.signUp(req, res, next));
 
 // User login
-router.post("/signin", userController.signIn);   
+router.post("/signin", (req, res, next) => userController.signIn(req, res, next));
 
 export default router;
